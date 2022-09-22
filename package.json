@@ -1,0 +1,22 @@
+{
+  "name": "@meveo-org/neo4j-graphql-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@neo4j/graphql": "^3.8.0",
+    "@neo4j/introspector": "^1.0.2",
+    "apollo-server": "^3.10.2",
+    "apollo-server-express": "^3.10.2",
+    "graphql": "^16.6.0",
+    "neo4j-driver": "^4.4.9",
+    "node-fetch": "^2.6.7",
+    "request": "^2.88.2"
+  }
+}
