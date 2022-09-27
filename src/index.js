@@ -30,41 +30,46 @@ let studioServer;
 const driver = neo4j.driver(NEO4J_URL, neo4j.auth.basic(NEO4J_USERNAME, NEO4J_PASSWORD));
 
 async function createApolloServer(typeDefs) {
-    const neoSchema = new Neo4jGraphQL({
-        typeDefs, 
-        driver,
-        config: {
-            driverConfig: {
-                database: "graph.db"
+    try {
+        const neoSchema = new Neo4jGraphQL({
+            typeDefs, 
+            driver,
+            config: {
+                driverConfig: {
+                    database: "graph.db"
+                }
             }
-        }
-    });
+        });
 
-    const schema = await neoSchema.getSchema();
+        const schema = await neoSchema.getSchema();
 
-    if (STUDIO) {
-        if (studioServer) {
-            await studioServer.stop();
+        if (STUDIO) {
+            if (studioServer) {
+                await studioServer.stop();
+            }
+            studioServer = await startApolloServerForStudio(schema)
         }
-        studioServer = await startApolloServerForStudio(schema)
+
+        server = new ApolloServer({
+            schema,
+            csrfPrevention: true,
+            cache: 'bounded',
+        });
+
+        await server.start();
+
+        console.log("Apollo server started");
+    } catch (error) {
+        console.error(error);
+        throw new Error(error.message);
     }
-
-    server = new ApolloServer({
-        schema,
-        csrfPrevention: true,
-        cache: 'bounded',
-    });
-
-    await server.start();
-
-    console.log("Apollo server started");
 }
 
 async function init() {
     const app = express();
 
     app.use(express.json());
-    app.use(express.text());
+    app.use(express.text({limit: "50mb"}));
 
     if (ENABLE_AUTH) {
         console.log("Enabling authentication using open-id provider ", AUTH_URL);
@@ -141,11 +146,10 @@ init().then(() => {
     } else {
         const typeDefs = fs.readFileSync("/data/graphql.sdl");
     
-        try {
-            createApolloServer(typeDefs.toString());
-        } catch (error) {
-            console.log("Failed to start apollo server", error);
-        }
+        createApolloServer(typeDefs.toString())
+            .catch((error) => {
+                console.log("Failed to start apollo server", error);
+            })
     }
 })
 
