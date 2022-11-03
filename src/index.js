@@ -29,11 +29,6 @@ let server;
 let studioServer;
 
 const config = {};
-
-if (NEO4J_URL.includes("+s")) {
-    config.encrypted = 'ENCRYPTION_ON';
-}
-
 const driver = neo4j.driver(NEO4J_URL, neo4j.auth.basic(NEO4J_USERNAME, NEO4J_PASSWORD), config);
 
 async function createApolloServer(typeDefs) {
