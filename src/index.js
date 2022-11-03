@@ -14,7 +14,8 @@ const {
     PORT = 7000,
     STUDIO = false,
     ENABLE_AUTH = false,
-    AUTH_URL = ""
+    AUTH_URL = "",
+    DATABASE = "neo4j"
 } = process.env;
 
 /**
@@ -27,7 +28,13 @@ let server;
  */
 let studioServer;
 
-const driver = neo4j.driver(NEO4J_URL, neo4j.auth.basic(NEO4J_USERNAME, NEO4J_PASSWORD));
+const config = {};
+
+if (NEO4J_URL.includes("+s")) {
+    config.encrypted = 'ENCRYPTION_ON';
+}
+
+const driver = neo4j.driver(NEO4J_URL, neo4j.auth.basic(NEO4J_USERNAME, NEO4J_PASSWORD), config);
 
 async function createApolloServer(typeDefs) {
     try {
@@ -36,7 +43,7 @@ async function createApolloServer(typeDefs) {
             driver,
             config: {
                 driverConfig: {
-                    database: "graph.db"
+                    database: DATABASE
                 }
             }
         });
