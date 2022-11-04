@@ -15,7 +15,8 @@ const {
     STUDIO = false,
     ENABLE_AUTH = false,
     AUTH_URL = "",
-    DATABASE = "neo4j"
+    DATABASE = "neo4j",
+    ENCRYPTED = false
 } = process.env;
 
 /**
@@ -29,6 +30,13 @@ let server;
 let studioServer;
 
 const config = {};
+
+if (ENCRYPTED) {
+    config.encrypted;
+}
+
+console.log("Neo4j config : ", config);
+
 const driver = neo4j.driver(NEO4J_URL, neo4j.auth.basic(NEO4J_USERNAME, NEO4J_PASSWORD), config);
 driver.verifyConnectivity().then(result => {
     console.log(`Connection to ${result.address} successful`);
