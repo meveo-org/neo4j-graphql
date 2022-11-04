@@ -30,6 +30,12 @@ let studioServer;
 
 const config = {};
 const driver = neo4j.driver(NEO4J_URL, neo4j.auth.basic(NEO4J_USERNAME, NEO4J_PASSWORD), config);
+driver.verifyConnectivity().then(result => {
+    console.log(`Connection to ${result.address} successful`);
+}).catch(error => {
+    console.log("Connection to neo4j server failed", error);
+});
+
 
 async function createApolloServer(typeDefs) {
     try {
