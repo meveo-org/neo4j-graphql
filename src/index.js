@@ -32,7 +32,7 @@ let studioServer;
 const config = {};
 
 if (ENCRYPTED) {
-    config.encrypted;
+    config.encrypted = 'ENCRYPTION_ON';
 }
 
 console.log("Neo4j config : ", config);
